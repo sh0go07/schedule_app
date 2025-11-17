@@ -1,5 +1,5 @@
 import React from "react";
-import type { MyTask } from "./types";
+import type { MyTask } from "../types";
 
 interface TaskListProps {
   tasks: MyTask[];

@@ -1,6 +1,6 @@
 import React from 'react';
-import type { MyEvent } from './types';
-import type { DateSelectArg } from '@fullcalendar/core';
+import type { MyEvent } from '../types';
+import type { DateClickArg } from '@fullcalendar/interaction';
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -11,10 +11,10 @@ import '@fullcalendar/common/main.css';
 
 interface CalendarProps {
   events: MyEvent[];
-  onDateSelect: (selectInfo: DateSelectArg) => void;
+  onDateDoubleClick: (info: DateClickArg) => void;
 }
 
-function Calendar({ events, onDateSelect }: CalendarProps) {
+function Calendar({ events, onDateDoubleClick }: CalendarProps) {
     return (
         <div className="calendar-container">
             <FullCalendar
@@ -29,15 +29,16 @@ function Calendar({ events, onDateSelect }: CalendarProps) {
                 }}
 
                 events={events}
-                selectable={true}
-                select={onDateSelect}
+                selectable={false}
+                dateClick={(info) => {
+                    if (info.jsEvent.detail === 2) { // ダブルクリックを検出
+                        onDateDoubleClick(info);
+                    }
+                }}
                 
                 locale="ja"
                 weekends={true}
 
-                dateClick={(info) => {
-                    console.log('Date clicked: ', info.dateStr);
-                }}
             />
         </div>
     )
