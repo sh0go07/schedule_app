@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import './App.css'
 import type { MyEvent, MyTask } from './types.ts'
-import type { DateSelectArg } from '@fullcalendar/core'
 import type { DateClickArg } from '@fullcalendar/interaction'
 import Calendar from './components/Calendar.tsx'
 import TaskList from './components/Tasklist.tsx'
