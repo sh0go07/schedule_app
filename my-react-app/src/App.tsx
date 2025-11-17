@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import './App.css'
 import type { MyEvent, MyTask } from './types.ts'
 import type { DateSelectArg } from '@fullcalendar/core'
-import Calendar from './Calendar.tsx'
-import TaskList from './Tasklist.tsx'
+import type { DateClickArg } from '@fullcalendar/interaction'
+import Calendar from './components/Calendar.tsx'
+import TaskList from './components/Tasklist.tsx'
 
 function App() {
   const [events, setEvents] = useState<MyEvent[]>([
@@ -32,16 +33,16 @@ function App() {
     },
   ]);
 
-  const handleDateSelect = (selectInfo: DateSelectArg) => {
+  const handleDateDoubleClick = (info: DateClickArg) => {
     const title = prompt('イベントのタイトルを入力してください:');
 
     if (title) {
       const newEvent: MyEvent = {
         id: crypto.randomUUID(),
         title: title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
+        start: info.dateStr,
+        end: info.dateStr,
+        allDay: info.allDay,
       };
 
       setEvents([...events, newEvent]);
@@ -58,7 +59,7 @@ function App() {
         // カレンダーを表示
         <Calendar
           events={events}
-          onDateSelect={handleDateSelect}
+          onDateDoubleClick={handleDateDoubleClick}
         />
 
         // タスクリストを表示
