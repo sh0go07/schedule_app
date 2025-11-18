@@ -1,30 +1,26 @@
-import React, {useState, useEffect, use} from 'react';
-import type { MyEvent } from '../types';
+import React, {useState, useEffect, use} from "react";
+import type { MyTask } from "../types";
 
-interface EventModalProps {
+interface TaskModalProps {
     isOpen: boolean;
     selectedDate: string;
     onClose: () => void;
-    onSave: (newEventData: {
+    onSave: (newTaskData: {
         title: string;
-        description?: string;
-        start: string;
-        end: string;
+        dueDate: string;
+        description: string;
     }) => void;
 }
 
-export default function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModalProps) {
+export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalProps) {
     const [title, setTitle] = useState('');
+    const [dueDate, setDueDate] = useState('');
     const [description, setDescription] = useState('');
-    const [start, setStart] = useState("09:00");
-    const [end, setEnd] = useState("10:00");
 
     useEffect(() => {
         if (isOpen) {
             setTitle('');
-            setDescription('');
-            setStart("09:00");
-            setEnd("10:00");
+            setDueDate(selectedDate);
         }
     }, [isOpen]);
 
@@ -34,14 +30,10 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
             return;
         }
 
-        const startDateTime = `${selectedDate}T${start}:00`;
-        const endDateTime = `${selectedDate}T${end}:00`;
-
         onSave({
             title: title,
+            dueDate: dueDate,
             description: description,
-            start: startDateTime,
-            end: endDateTime,
         });
     };
 
@@ -50,11 +42,11 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>新しいイベントを追加</h2>
+                <h2>新しい予定を追加</h2>
                 <p>{ selectedDate } の名前</p>
 
                 <div>
-                    <label>タイトル:</label>
+                    <label>タイトル</label>
                     <input
                         type="text"
                         value={title}
@@ -63,20 +55,11 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
                 </div>
 
                 <div>
-                    <label>開始時間:</label>
+                    <label>締め切り:</label>
                     <input
-                        type="time"
-                        value={start}
-                        onChange={(e) => setStart(e.target.value)}
-                    />
-                </div>
-
-                <div>
-                    <label>終了時間:</label>
-                    <input
-                        type="time"
-                        value={end}
-                        onChange={(e) => setEnd(e.target.value)}
+                        type="date"
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
                     />
                 </div>
 
@@ -93,8 +76,8 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
                     <button onClick={onClose}>キャンセル</button>
                     <button onClick={handleSave}>保存</button>
                 </div>
-                
+
             </div>
         </div>
-    );
+    )
 }
