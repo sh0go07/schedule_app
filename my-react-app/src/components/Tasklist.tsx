@@ -3,18 +3,23 @@ import type { MyTask } from "../types";
 
 interface TaskListProps {
   tasks: MyTask[];
+  onAddClick: () => void;
 }
 
-function TaskList({ tasks }: TaskListProps) {
+function TaskList({ tasks, onAddClick }: TaskListProps) {
   return (
     <div className="tasklist-container">
       <h2>タスクリスト</h2>
+
+      <button className="add-task-button" onClick={onAddClick}>
+        タスクを追加
+      </button>
+
       <ul>
         {tasks.map((task) => (
-          <li key={task.id} className={task.isDone ? "done" : ""}>
-            <h3>{task.title}</h3>
-            {task.description && <p>{task.description}</p>}
-            <p>期限: {task.dueDate.toLocaleDateString()}</p>
+          <li key={task.id}>
+            <input type="checkbox" checked={task.isDone} readOnly />
+            {task.title} - {task.dueDate}
           </li>
         ))}
       </ul>

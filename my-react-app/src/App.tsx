@@ -5,6 +5,7 @@ import type { DateClickArg } from '@fullcalendar/interaction'
 import Calendar from './components/Calendar.tsx'
 import TaskList from './components/Tasklist.tsx'
 import EventModal from './components/AddEvent.tsx'
+import TaskModal from './components/AddTask.tsx'
 
 function App() {
   const [events, setEvents] = useState<MyEvent[]>([
@@ -22,40 +23,64 @@ function App() {
       id: '1',
       title: 'レポート作成',
       description: '月次レポートを作成して提出する',
-      dueDate: new Date('2025-11-15'),
+      dueDate: '2025-11-15',
       isDone: false,
     },
     {
       id: '2',
       title: 'コードレビュー',
-      dueDate: new Date('2025-11-16'),
+      dueDate: '2025-11-16',
       isDone: true,
     },
   ]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [selectedDateStr, setSelectedDateStr] = useState('');
 
   const handleDateDoubleClick = (info: DateClickArg) => {
-    setIsModalOpen(true);
+    setIsEventModalOpen(true);
     setSelectedDateStr(info.dateStr);
   }
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
+  const handleEventModalClose = () => {
+    setIsEventModalOpen(false);
   }
 
-  const handleModalSave = (newEventData: { title: string; start: string; end: string }) => {
+  const handleEventModalSave = (newEventData: { title: string; start: string; end: string }) => {
     const newEvent: MyEvent = {
       id: crypto.randomUUID(),
       title: newEventData.title,
+      description: undefined,
       start: newEventData.start,
       end: newEventData.end,
       allDay: false,
     };
 
     setEvents([...events, newEvent]);
-    setIsModalOpen(false);
+    setIsEventModalOpen(false);
+  }
+
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
+  const handleTaskAddClick = () => {
+    setIsTaskModalOpen(true);
+  }
+
+  const handleTaskModalClose = () => {
+    setIsTaskModalOpen(false);
+  }
+
+  const handleTaskModalSave = (newTaskData: { title: string, dueDate: string, description?: string }) => {
+    const newTask: MyTask = {
+      id: crypto.randomUUID(),
+      title: newTaskData.title,
+      dueDate: newTaskData.dueDate,
+      description: newTaskData.description,
+      isDone: false,
+    };
+
+    setTasks([...tasks, newTask]);
+    setIsTaskModalOpen(false);
   }
 
   return (
@@ -65,23 +90,29 @@ function App() {
           <h1>スケジュール管理アプリ</h1>
         </header>
 
-        // カレンダーを表示
         <Calendar
           events={events}
           onDateDoubleClick={handleDateDoubleClick}
         />
 
-        // タスクリストを表示
         <TaskList
           tasks={tasks}
+          onAddClick={handleTaskAddClick}
         />
       </div>
 
       <EventModal
-        isOpen={isModalOpen}
+        isOpen={isEventModalOpen}
         selectedDate={selectedDateStr}
-        onClose={handleModalClose}
-        onSave={handleModalSave}
+        onClose={handleEventModalClose}
+        onSave={handleEventModalSave}
+      />
+
+      <TaskModal
+        isOpen={isTaskModalOpen}
+        selectedDate={selectedDateStr}
+        onClose={handleTaskModalClose}
+        onSave={handleTaskModalSave}
       />
     </>
   )
