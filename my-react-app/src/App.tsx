@@ -4,14 +4,15 @@ import type { MyEvent, MyTask } from './types.ts'
 import type { DateClickArg } from '@fullcalendar/interaction'
 import Calendar from './components/Calendar.tsx'
 import TaskList from './components/Tasklist.tsx'
+import EventModal from './components/AddEvent.tsx'
 
 function App() {
   const [events, setEvents] = useState<MyEvent[]>([
     {
       id: '1',
       title: '会議',
-      start: new Date('2025-11-14T10:00:00'),
-      end: new Date('2025-11-14T11:00:00'),
+      start: '2025-11-14T10:00:00',
+      end: '2025-11-14T11:00:00',
       allDay: false,
     },
   ]);
@@ -32,20 +33,29 @@ function App() {
     },
   ]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDateStr, setSelectedDateStr] = useState('');
+
   const handleDateDoubleClick = (info: DateClickArg) => {
-    const title = prompt('イベントのタイトルを入力してください:');
+    setIsModalOpen(true);
+    setSelectedDateStr(info.dateStr);
+  }
 
-    if (title) {
-      const newEvent: MyEvent = {
-        id: crypto.randomUUID(),
-        title: title,
-        start: info.dateStr,
-        end: info.dateStr,
-        allDay: info.allDay,
-      };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  }
 
-      setEvents([...events, newEvent]);
-    }
+  const handleModalSave = (newEventData: { title: string; start: string; end: string }) => {
+    const newEvent: MyEvent = {
+      id: crypto.randomUUID(),
+      title: newEventData.title,
+      start: newEventData.start,
+      end: newEventData.end,
+      allDay: false,
+    };
+
+    setEvents([...events, newEvent]);
+    setIsModalOpen(false);
   }
 
   return (
@@ -66,6 +76,13 @@ function App() {
           tasks={tasks}
         />
       </div>
+
+      <EventModal
+        isOpen={isModalOpen}
+        selectedDate={selectedDateStr}
+        onClose={handleModalClose}
+        onSave={handleModalSave}
+      />
     </>
   )
 }
