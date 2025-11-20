@@ -12,5 +12,6 @@ export interface MyTask {
     title: string;
     description?: string;
     dueDate: string;
+    dueTime: string;
     isDone: boolean;
 }

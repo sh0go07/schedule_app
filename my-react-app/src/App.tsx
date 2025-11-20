@@ -18,7 +18,7 @@ function App() {
     } else {
       return [];
     }
-});
+  });
 
   const [tasks, setTasks] = useState<MyTask[]>(() => {
     const savedEvents = localStorage.getItem("task-list");
@@ -28,7 +28,7 @@ function App() {
     } else {
       return [];
     }
-});
+  });
 
 
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -98,6 +98,14 @@ function App() {
     setIsEventModalOpen(false);
   }
 
+  const handleEventDelete = () => {
+    if (editingEvent) {
+      setEvents(events.filter(ev => ev.id !== editingEvent.id));
+      setIsEventModalOpen(false);
+      setEditingEvent(null);
+    }
+  }
+
 
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
@@ -149,6 +157,7 @@ function App() {
         eventToEdit={editingEvent}
         onClose={handleEventModalClose}
         onSave={handleEventModalSave}
+        onDelete={handleEventDelete}
       />
 
       <TaskModal
