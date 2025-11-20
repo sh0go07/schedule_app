@@ -1,6 +1,7 @@
 import React from 'react';
 import type { MyEvent } from '../types';
 import type { DateClickArg } from '@fullcalendar/interaction';
+import type { EventClickArg } from '@fullcalendar/core';
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -12,9 +13,10 @@ import '@fullcalendar/common/main.css';
 interface CalendarProps {
   events: MyEvent[];
   onDateDoubleClick: (info: DateClickArg) => void;
+  onEventClick: (info: EventClickArg) => void;
 }
 
-function Calendar({ events, onDateDoubleClick }: CalendarProps) {
+function Calendar({ events, onDateDoubleClick, onEventClick }: CalendarProps) {
     return (
         <div className="calendar-container">
             <FullCalendar
@@ -35,6 +37,8 @@ function Calendar({ events, onDateDoubleClick }: CalendarProps) {
                         onDateDoubleClick(info);
                     }
                 }}
+
+                eventClick={onEventClick}
                 
                 locale="ja"
                 weekends={true}

@@ -4,6 +4,7 @@ import type { MyEvent } from '../types';
 interface EventModalProps {
     isOpen: boolean;
     selectedDate: string;
+    eventToEdit?: MyEvent | null;
     onClose: () => void;
     onSave: (newEventData: {
         title: string;
@@ -13,7 +14,7 @@ interface EventModalProps {
     }) => void;
 }
 
-export default function EventModal({ isOpen, selectedDate, onClose, onSave }: EventModalProps) {
+export default function EventModal({ isOpen, selectedDate, onClose, onSave, eventToEdit }: EventModalProps) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [start, setStart] = useState("09:00");
@@ -21,12 +22,24 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
 
     useEffect(() => {
         if (isOpen) {
-            setTitle('');
-            setDescription('');
-            setStart("09:00");
-            setEnd("10:00");
+            if (eventToEdit) {
+                setTitle(eventToEdit.title);
+
+                const startIso = eventToEdit.start;
+                const endIso = eventToEdit.end;
+
+                setStart(startIso.includes('T') ? startIso.split('T')[1].substring(0,5) : "09:00");
+
+                if (endIso) {
+                    setEnd(endIso.includes('T') ? endIso.split('T')[1].substring(0,5) : "10:00");
+                }
+            } else {
+                setTitle('');
+                setStart("09:00");
+                setEnd("10:00");
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, eventToEdit]);
 
     const handleSave = () => {
         if (!title) {
@@ -34,14 +47,21 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
             return;
         }
 
+        let targetDate = "";
+        if (eventToEdit) {
+            targetDate = eventToEdit.start.split('T')[0];
+        } else if (selectedDate) {
+            targetDate = selectedDate;
+        }
+
         const startDateTime = `${selectedDate}T${start}:00`;
         const endDateTime = `${selectedDate}T${end}:00`;
 
         onSave({
             title: title,
-            description: description,
             start: startDateTime,
             end: endDateTime,
+            description: description,
         });
     };
 
@@ -50,8 +70,13 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>新しいイベントを追加</h2>
-                <p>{ selectedDate } の名前</p>
+                <h2>{eventToEdit ? "イベントの編集" : "新しいイベントの追加"}</h2>
+                <p>
+                    {eventToEdit
+                        ? eventToEdit.start.split('T')[0]
+                        : selectedDate
+                    } の予定
+                </p>
 
                 <div>
                     <label>タイトル:</label>
@@ -91,7 +116,9 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave }: Ev
 
                 <div className="modal-buttons">
                     <button onClick={onClose}>キャンセル</button>
-                    <button onClick={handleSave}>保存</button>
+                    <button onClick={handleSave}>
+                        {eventToEdit ? "更新" : "追加"}
+                    </button>
                 </div>
                 
             </div>

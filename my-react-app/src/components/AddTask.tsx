@@ -9,7 +9,7 @@ interface TaskModalProps {
         title: string;
         dueDate: string;
         dueTime: string;
-        description: string;
+        description?: string;
     }) => void;
 }
 
@@ -46,7 +46,7 @@ export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: Tas
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>新しい予定を追加</h2>
+                <h2>新しいタスクを追加</h2>
                 <p>{ selectedDate } の名前</p>
 
                 <div>
