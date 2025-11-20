@@ -8,6 +8,7 @@ interface TaskModalProps {
     onSave: (newTaskData: {
         title: string;
         dueDate: string;
+        dueTime: string;
         description: string;
     }) => void;
 }
@@ -15,12 +16,14 @@ interface TaskModalProps {
 export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalProps) {
     const [title, setTitle] = useState('');
     const [dueDate, setDueDate] = useState('');
+    const [dueTime, setDueTime] = useState('');
     const [description, setDescription] = useState('');
 
     useEffect(() => {
         if (isOpen) {
             setTitle('');
             setDueDate(selectedDate);
+            setDueTime("12:00");
         }
     }, [isOpen]);
 
@@ -33,6 +36,7 @@ export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: Tas
         onSave({
             title: title,
             dueDate: dueDate,
+            dueTime: dueTime,
             description: description,
         });
     };
@@ -60,6 +64,15 @@ export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: Tas
                         type="date"
                         value={dueDate}
                         onChange={(e) => setDueDate(e.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <label>時間:</label>
+                    <input
+                        type="time"
+                        value={dueTime}
+                        onChange={(e) => setDueTime(e.target.value)}
                     />
                 </div>
 
