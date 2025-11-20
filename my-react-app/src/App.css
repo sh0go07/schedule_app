@@ -103,3 +103,16 @@
   background-color: #007bff;
   color: white;
 }
+
+.modal-buttons button:last-child:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #ff4444;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #cc0000;
+}

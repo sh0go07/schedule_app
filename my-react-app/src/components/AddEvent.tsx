@@ -12,9 +12,10 @@ interface EventModalProps {
         start: string;
         end: string;
     }) => void;
+    onDelete: () => void;
 }
 
-export default function EventModal({ isOpen, selectedDate, onClose, onSave, eventToEdit }: EventModalProps) {
+export default function EventModal({ isOpen, selectedDate, onClose, onSave, onDelete, eventToEdit }: EventModalProps) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [start, setStart] = useState("09:00");
@@ -64,6 +65,12 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave, even
             description: description,
         });
     };
+
+    const handleDelete = () => {
+        if (window.confirm("本当にこの予定を削除しますか？")) {
+            onDelete();
+        }
+    }
 
     if (!isOpen) return null;
 
@@ -116,6 +123,16 @@ export default function EventModal({ isOpen, selectedDate, onClose, onSave, even
 
                 <div className="modal-buttons">
                     <button onClick={onClose}>キャンセル</button>
+
+                    {eventToEdit && (
+                        <button
+                            onClick={handleDelete}
+                            className="delete-button"
+                        >
+                            削除
+                        </button>
+                    )}
+
                     <button onClick={handleSave}>
                         {eventToEdit ? "更新" : "追加"}
                     </button>
