@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import type { MyEvent, MyTask } from './types.ts'
 import type { DateClickArg } from '@fullcalendar/interaction';
@@ -33,7 +33,6 @@ function App() {
 
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [selectedDateStr, setSelectedDateStr] = useState("");
-  
   const [editingEvent, setEditingEvent] = useState<MyEvent | null>(null);
 
   useEffect(() => {
@@ -50,28 +49,36 @@ function App() {
   } 
 
   const handleEventClick = (info: EventClickArg) => {
-    const clickedEvent = info.event;
+    const clickedInfo = info.event;
 
-    const toIsoStringLocal = (date: Date | null) => {
-      if (!date) return "";
-      const pad = (n: number) => n < 10 ? '0' + n : n;
-      return date.getFullYear() +
-        '-' + pad(date.getMonth() + 1) +
-        '-' + pad(date.getDate()) +
-        'T' + pad(date.getHours()) +
-        ':' + pad(date.getMinutes());
-    };
+    if (clickedInfo.extendedProps.isTask) {
+      const foundTask = tasks.find(t => t.id === clickedInfo.id);
+      if (foundTask) {
+        setEditingTask(foundTask);
+        setIsTaskModalOpen(true);
+      }
+    } else {
+      const toIsoStringLocal = (date: Date | null) => {
+        if (!date) return "";
+        const pad = (n: number) => n < 10 ? '0' + n : n;
+        return date.getFullYear() +
+          '-' + pad(date.getMonth() + 1) +
+          '-' + pad(date.getDate()) +
+          'T' + pad(date.getHours()) +
+          ':' + pad(date.getMinutes());
+      };
 
-    const eventData: MyEvent = {
-      id: clickedEvent.id,
-      title: clickedEvent.title,
-      start: toIsoStringLocal(clickedEvent.start),
-      end: toIsoStringLocal(clickedEvent.end),
-      allDay: clickedEvent.allDay,
-    };
+      const eventData: MyEvent = {
+        id: clickedInfo.id,
+        title: clickedInfo.title,
+        start: toIsoStringLocal(clickedInfo.start),
+        end: toIsoStringLocal(clickedInfo.end),
+        allDay: clickedInfo.allDay,
+      };
 
-    setEditingEvent(eventData);
-    setIsEventModalOpen(true);
+      setEditingEvent(eventData);
+      setIsEventModalOpen(true);
+    }
   }
 
   const handleEventModalClose = () => {
@@ -108,8 +115,7 @@ function App() {
 
 
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-
-  const [editingTask, setEditingTask] =useState<Mytask | null>(null);
+  const [editingTask, setEditingTask] =useState<MyTask | null>(null);
 
   const handleTaskAddClick = () => {
     setEditingTask(null);
@@ -155,6 +161,19 @@ function App() {
     }
   }
 
+  const taskEvents = tasks.map(task => ({
+    id: task.id,
+    title: task.title,
+    start: `${task.dueDate}T${task.dueTime}`,
+    backgroundColor: '#ff7556',
+    borderColor: '#ff7556',
+    extendedProps: {
+      isTask: true,
+    },
+  }));
+
+  const calendarDisplayEvents = [...events, ...taskEvents];
+
 
   return (
     <>
@@ -164,7 +183,7 @@ function App() {
         </header>
 
         <Calendar
-          events={events}
+          events={calendarDisplayEvents}
           onDateDoubleClick={handleDateDoubleClick}
           onEventClick={handleEventClick}
         />
