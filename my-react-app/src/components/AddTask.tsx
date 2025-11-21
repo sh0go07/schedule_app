@@ -77,7 +77,6 @@ export default function TaskModal({ isOpen, selectedDate, taskToEdit, onClose, o
         >
             <div className="modal-content">
                 <h2>{taskToEdit ? "タスクの編集" : "新しいタスクの追加"}</h2>
-                <p>{ selectedDate } の名前</p>
 
                 <div>
                     <label>タイトル</label>
