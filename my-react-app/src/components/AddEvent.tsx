@@ -1,4 +1,4 @@
-import React, {useState, useEffect, use} from 'react';
+import React, {useState, useEffect} from 'react';
 import type { MyEvent } from '../types';
 
 interface EventModalProps {
@@ -75,7 +75,13 @@ export default function EventModal({ isOpen, selectedDate, eventToEdit, onClose,
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                    onClose();
+                }
+            }}
+        >
             <div className="modal-content">
                 <h2>{eventToEdit ? "イベントの編集" : "新しいイベントの追加"}</h2>
                 <p>
