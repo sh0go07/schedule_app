@@ -15,7 +15,7 @@ interface EventModalProps {
     onDelete: () => void;
 }
 
-export default function EventModal({ isOpen, selectedDate, onClose, onSave, onDelete, eventToEdit }: EventModalProps) {
+export default function EventModal({ isOpen, selectedDate, eventToEdit, onClose, onSave, onDelete }: EventModalProps) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [start, setStart] = useState("09:00");

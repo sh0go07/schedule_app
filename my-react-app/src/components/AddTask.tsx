@@ -1,9 +1,10 @@
-import React, {useState, useEffect, use} from "react";
+import React, { useState, useEffect } from "react";
 import type { MyTask } from "../types";
 
 interface TaskModalProps {
     isOpen: boolean;
     selectedDate: string;
+    taskToEdit?: MyTask | null;
     onClose: () => void;
     onSave: (newTaskData: {
         title: string;
@@ -11,9 +12,10 @@ interface TaskModalProps {
         dueTime: string;
         description?: string;
     }) => void;
+    onDelete: () => void;
 }
 
-export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: TaskModalProps) {
+export default function TaskModal({ isOpen, selectedDate, taskToEdit, onClose, onSave, onDelete }: TaskModalProps) {
     const [title, setTitle] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [dueTime, setDueTime] = useState('');
@@ -21,11 +23,27 @@ export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: Tas
 
     useEffect(() => {
         if (isOpen) {
-            setTitle('');
-            setDueDate(selectedDate);
-            setDueTime("12:00");
+            if (taskToEdit) {
+                setTitle(taskToEdit.title);
+                setDescription(taskToEdit.description || "");
+
+                const iso = taskToEdit.dueDate;
+                if (iso.includes('T')) {
+                    const parts = iso.split('T');
+                    setDueDate(parts[0]);
+                    setDueTime(parts[1]);
+                } else {
+                    setDueDate(iso);
+                    setDueTime("12:00");
+                }
+            } else {
+                setTitle("");
+                setDueDate(selectedDate);
+                setDueTime("12:00");
+                setDescription("");
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, taskToEdit]);
 
     const handleSave = () => {
         if (!title) {
@@ -41,12 +59,18 @@ export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: Tas
         });
     };
 
+    const handleDelete = () => {
+        if (window.confirm('本当にこのタスクを削除しますか？')) {
+            onDelete();
+        }
+    }
+
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>新しいタスクを追加</h2>
+                <h2>{taskToEdit ? "タスクの編集" : "新しいタスクの追加"}</h2>
                 <p>{ selectedDate } の名前</p>
 
                 <div>
@@ -87,7 +111,18 @@ export default function TaskModal({ isOpen, selectedDate, onClose, onSave }: Tas
 
                 <div className="modal-buttons">
                     <button onClick={onClose}>キャンセル</button>
-                    <button onClick={handleSave}>保存</button>
+
+                    {taskToEdit && (
+                        <button
+                            onClick={handleDelete}
+                            className="delete-button"
+                        >
+                            削除
+                        </button>
+                    )}
+                    <button onClick={handleSave}>
+                        {taskToEdit ? "更新" : "追加"}
+                    </button>
                 </div>
 
             </div>
