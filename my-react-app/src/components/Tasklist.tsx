@@ -4,9 +4,10 @@ import type { MyTask } from "../types";
 interface TaskListProps {
   tasks: MyTask[];
   onAddClick: () => void;
+  onTaskClick: (info: MyTask) => void;
 }
 
-function TaskList({ tasks, onAddClick }: TaskListProps) {
+function TaskList({ tasks, onAddClick, onTaskClick }: TaskListProps) {
   return (
     <div className="tasklist-container">
       <h2>タスクリスト</h2>
@@ -17,10 +18,16 @@ function TaskList({ tasks, onAddClick }: TaskListProps) {
 
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>
+          <div key={task.id}>
             <input type="checkbox" checked={task.isDone} readOnly />
-            {task.title} - {task.dueDate}
-          </li>
+
+            <span
+              onClick={() => onTaskClick(task)}
+              style={{ cursor: "pointer", marginLeft: "10px", flex: 1 }}
+            >
+              {task.title} - {task.dueDate} {task.dueTime}
+            </span>
+          </div>
         ))}
       </ul>
     </div>

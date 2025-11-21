@@ -109,7 +109,15 @@ function App() {
 
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
+  const [editingTask, setEditingTask] =useState<Mytask | null>(null);
+
   const handleTaskAddClick = () => {
+    setEditingTask(null);
+    setIsTaskModalOpen(true);
+  }
+
+  const handleTaskClick = (task: MyTask) => {
+    setEditingTask(task);
     setIsTaskModalOpen(true);
   }
 
@@ -118,16 +126,33 @@ function App() {
   }
 
   const handleTaskSave = (newTaskData: { title: string, dueDate: string, description: string }) => {
-    const newTask: MyTask = {
-      id: crypto.randomUUID(),
-      title: newTaskData.title,
-      dueDate: newTaskData.dueDate,
-      dueTime: "12:00",
-      description: newTaskData.description,
-      isDone: false,
-    };
-    setTasks([...tasks, newTask]);
+    if (editingTask) {
+      setTasks(tasks.map(t => 
+        t.id === editingTask.id
+          ? { ...t, ...newTaskData }
+          : t
+      ));
+    } else {
+      const newTask: MyTask = {
+        id: crypto.randomUUID(),
+        title: newTaskData.title,
+        dueDate: newTaskData.dueDate,
+        dueTime: "12:00",
+        description: newTaskData.description,
+        isDone: false,
+      };
+      setTasks([...tasks, newTask]);
+    }
+
     setIsTaskModalOpen(false); 
+  }
+
+  const handleTaskDelete = () => {
+    if (editingTask) {
+      setTasks(tasks.filter(t => t.id !== editingTask.id));
+      setIsTaskModalOpen(false);
+      setEditingTask(null);
+    }
   }
 
 
@@ -147,6 +172,7 @@ function App() {
         <TaskList
           tasks={tasks}
           onAddClick={handleTaskAddClick}
+          onTaskClick={handleTaskClick}
         />
       </div>
 
@@ -164,6 +190,8 @@ function App() {
         isOpen={isTaskModalOpen}
         onClose={handleTaskModalClose}
         onSave={handleTaskSave}
+        onDelete={handleTaskDelete}
+        taskToEdit={editingTask}
       />
     </>
   )
