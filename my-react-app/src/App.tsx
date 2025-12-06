@@ -74,6 +74,7 @@ function App() {
         start: toIsoStringLocal(clickedInfo.start),
         end: toIsoStringLocal(clickedInfo.end),
         allDay: clickedInfo.allDay,
+        color: clickedInfo.backgroundColor,
       };
 
       setEditingEvent(eventData);
@@ -85,7 +86,7 @@ function App() {
     setIsEventModalOpen(false);
   }
 
-  const handleEventModalSave = (newEventData: { title: string, start: string, end: string }) => {
+  const handleEventModalSave = (newEventData: { title: string, start: string, end: string, color: string }) => {
     if (editingEvent) {
       setEvents(events.map(ev => 
         ev.id === editingEvent.id 
@@ -99,6 +100,7 @@ function App() {
         start: newEventData.start,
         end: newEventData.end,
         allDay: false,
+        color: newEventData.color,
       };
       setEvents([...events, newEvent]);
     }

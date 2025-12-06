@@ -5,6 +5,7 @@ export interface MyEvent {
     start: string;
     end: string;
     allDay?: boolean;
+    color?: string;
 }
 
 export interface MyTask {
