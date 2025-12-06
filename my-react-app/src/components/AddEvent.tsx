@@ -15,11 +15,14 @@ interface EventModalProps {
     onDelete: () => void;
 }
 
+const COLORS = ['#3788d8', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6']
+
 export default function EventModal({ isOpen, selectedDate, eventToEdit, onClose, onSave, onDelete }: EventModalProps) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [start, setStart] = useState("09:00");
     const [end, setEnd] = useState("10:00");
+    const [selectedColor, setSelectedColor] = useState(COLORS[0])
 
     useEffect(() => {
         if (isOpen) {
@@ -34,10 +37,13 @@ export default function EventModal({ isOpen, selectedDate, eventToEdit, onClose,
                 if (endIso) {
                     setEnd(endIso.includes('T') ? endIso.split('T')[1].substring(0,5) : "10:00");
                 }
+
+                setSelectedColor(eventToEdit.color || COLORS[0]);
             } else {
                 setTitle('');
                 setStart("09:00");
                 setEnd("10:00");
+                setSelectedColor(COLORS[0]);
             }
         }
     }, [isOpen, eventToEdit]);
@@ -63,6 +69,7 @@ export default function EventModal({ isOpen, selectedDate, eventToEdit, onClose,
             start: startDateTime,
             end: endDateTime,
             description: description,
+            color: selectedColor,
         });
     };
 
@@ -98,6 +105,40 @@ export default function EventModal({ isOpen, selectedDate, eventToEdit, onClose,
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                     />
+                </div>
+
+                <div>
+                    <label>色:</label>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: '12px',
+                            marginTop: '8px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {COLORS.map((c) => (
+                            <div
+                                key={c}
+                                onClick={() => setSelectedColor(c)}
+                                style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '50%',
+                                    backgroundColor: c,
+                                    cursor: 'pointer',
+                                    
+                                    border: selectedColor === c ? '3px solid white' : '2px solid transparent',
+                                    boxShadow: selectedColor === c ? '0 0 0 2px #007bff' : '0 2px 4px rgba(0,0,0,0.2)',
+                                    transform: selectedColor === c ? 'scale(1.1)' : 'scale(1)',
+                                    transition: 'all 0.2s',
+                                    flexShrink: 0
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 <div>
